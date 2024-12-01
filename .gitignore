@@ -1,0 +1,12 @@
+/_build/
+/cover/
+/deps/
+/doc/
+/.fetch
+erl_crash.dump
+*.ez
+aoc_2024-*.tar
+/tmp/
+*.beam
+/config/*.secret.exs
+.elixir_ls/
