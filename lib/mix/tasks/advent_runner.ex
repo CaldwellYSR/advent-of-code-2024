@@ -6,29 +6,30 @@ defmodule Mix.Tasks.AdventRunner do
   mix advent_runner all # Will run all existing puzzles to date
   mix advent_runner one # Will run day one
   mix advent_runner 1   # also works
+  mix advent_runner 1 2   # also works
   ```
   """
   use Mix.Task
 
   @shortdoc "Runs advent-of-code puzzles"
-  def run(opts) do
-    run_tasks(opts)
-  end
+  def run([]), do: run_tasks(["all"])
 
-  defp run_tasks([]) do
-    one()
+  def run(opts) do
+    Enum.each(opts, &run_task/1)
   end
 
   defp run_tasks(["all"]) do
     one()
+    two()
   end
 
-  defp run_tasks(["one"]), do: one()
-  defp run_tasks(["1"]), do: one()
+  defp run_task("one"), do: one()
+  defp run_task("1"), do: one()
+  defp run_task("two"), do: two()
+  defp run_task("2"), do: two()
 
   defp one(), do: run_task(AdventOfCode.One, "One")
-
-  # defp two(), do: run_task(AdventOfCode.Two)
+  defp two(), do: run_task(AdventOfCode.Two, "Two")
 
   defp run_task(module, day) do
     IO.puts("===== Day #{day} ============================================")
