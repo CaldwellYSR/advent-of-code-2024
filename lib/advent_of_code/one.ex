@@ -1,5 +1,5 @@
 defmodule AdventOfCode.One do
-  def main() do
+  def star_one() do
     {list_a, list_b} = get_data()
 
     Enum.zip(list_a, list_b)
@@ -8,7 +8,7 @@ defmodule AdventOfCode.One do
     end)
   end
 
-  def secondary() do
+  def star_two() do
     {list_a, list_b} = get_data()
     frequencies = Enum.frequencies(list_b)
 
@@ -19,13 +19,15 @@ defmodule AdventOfCode.One do
 
   defp find_similarity_score(value, frequencies) do
     occurrences =
-      case Map.fetch(frequencies, value) do
-        {:ok, val} -> val
-        :error -> 0
-      end
+      frequencies
+      |> Map.fetch(value)
+      |> parse_value()
 
     value * occurrences
   end
+
+  defp parse_value({:ok, value}), do: value
+  defp parse_value(:error), do: 0
 
   defp get_data() do
     data =
