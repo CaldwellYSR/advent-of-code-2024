@@ -18,7 +18,17 @@ defmodule AdventOfCode.Two do
   def star_two(), do: star_two("two.txt")
 
   def star_two(filename) do
-    :ok
+    AdventOfCode.read_input(filename)
+    |> Stream.map(fn line ->
+      line
+      |> String.split()
+      |> Enum.map(&String.to_integer/1)
+    end)
+    |> Stream.scan(0, fn line, count ->
+      count + is_line_safe_with_removals(line)
+    end)
+    |> Enum.reverse()
+    |> List.first()
   end
 
   def is_line_safe([]), do: 0
@@ -45,6 +55,26 @@ defmodule AdventOfCode.Two do
       1
     else
       0
+    end
+  end
+
+  def is_line_safe_with_removals([]), do: 0
+
+  def is_line_safe_with_removals(line) do
+    case is_line_safe(line) do
+      1 ->
+        1
+
+      0 ->
+        if Enum.map(0..(length(line) - 1), fn item ->
+             {_, rest} = List.pop_at(line, item)
+             rest
+           end)
+           |> Enum.any?(fn line -> is_line_safe(line) == 1 end) do
+          1
+        else
+          0
+        end
     end
   end
 end
