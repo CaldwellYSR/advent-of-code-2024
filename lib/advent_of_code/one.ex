@@ -1,6 +1,8 @@
 defmodule AdventOfCode.One do
-  def star_one() do
-    {list_a, list_b} = get_data()
+  def star_one(), do: star_one("one.txt")
+
+  def star_one(filename) do
+    {list_a, list_b} = get_data(filename)
 
     Enum.zip(list_a, list_b)
     |> Enum.reduce(0, fn {a, b}, acc ->
@@ -8,8 +10,10 @@ defmodule AdventOfCode.One do
     end)
   end
 
-  def star_two() do
-    {list_a, list_b} = get_data()
+  def star_two(), do: star_two("one.txt")
+
+  def star_two(filename) do
+    {list_a, list_b} = get_data(filename)
     frequencies = Enum.frequencies(list_b)
 
     Enum.reduce(list_a, 0, fn value, acc ->
@@ -29,9 +33,10 @@ defmodule AdventOfCode.One do
   defp parse_value({:ok, value}), do: value
   defp parse_value(:error), do: 0
 
-  defp get_data() do
+  defp get_data(filename) do
     data =
-      AdventOfCode.read_input("one.txt")
+      filename
+      |> AdventOfCode.read_input()
       |> Stream.map(fn line ->
         [a, b] = String.split(line, " ", trim: true)
         {a, _rem} = Integer.parse(a)
