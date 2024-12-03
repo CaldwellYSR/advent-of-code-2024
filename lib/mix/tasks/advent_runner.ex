@@ -21,15 +21,19 @@ defmodule Mix.Tasks.AdventRunner do
   defp run_tasks(["all"]) do
     one()
     two()
+    three()
   end
 
   defp run_task("one"), do: one()
   defp run_task("1"), do: one()
   defp run_task("two"), do: two()
   defp run_task("2"), do: two()
+  defp run_task("three"), do: three()
+  defp run_task("3"), do: three()
 
   defp one(), do: run_task(AdventOfCode.One, "One")
   defp two(), do: run_task(AdventOfCode.Two, "Two")
+  defp three(), do: run_task(AdventOfCode.Three, "Three")
 
   defp run_task(module, day) do
     IO.puts("===== Day #{day} ============================================")
