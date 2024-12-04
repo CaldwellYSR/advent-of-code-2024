@@ -19,24 +19,18 @@ defmodule AdventOfCode.Three do
     {_command, output} =
       ~r/do\(\)|don\'t\(\)/
       |> Regex.split(line, include_captures: true)
-      |> Enum.scan({true, 0}, fn line, {continue, acc} ->
-        case line do
-          "don't()" ->
-            {false, acc}
-
-          "do()" ->
-            {true, acc}
-
-          line ->
-            if continue,
-              do: {continue, acc + Enum.sum(star_one_parser(line))},
-              else: {continue, acc}
-        end
-      end)
-      |> List.last()
+      |> Enum.reduce({true, 0}, &process_line/2)
 
     [output]
   end
+
+  defp process_line("don't()", {_, acc}), do: {false, acc}
+  defp process_line("do()", {_, acc}), do: {true, acc}
+
+  defp process_line(line, {true, acc}),
+    do: {true, acc + Enum.sum(star_one_parser(line))}
+
+  defp process_line(_line, state), do: state
 
   defp run_commands(commands) do
     commands
