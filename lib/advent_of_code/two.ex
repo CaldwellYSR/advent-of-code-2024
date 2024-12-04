@@ -19,27 +19,63 @@ defmodule AdventOfCode.Two do
   def is_line_safe([]), do: 0
 
   def is_line_safe(line) do
-    changes = calculate_changes(line)
-    if valid_changes?(changes), do: 1, else: 0
+    bad_pair_index =
+      line
+      |> calculate_changes()
+      |> get_bad_pair_index()
+
+    if is_nil(bad_pair_index), do: 1, else: 0
   end
 
   def calculate_changes(line) do
     line
-    |> Enum.zip(tl(line) ++ [List.first(line)])
-    |> List.delete_at(length(line) - 1)
+    |> Enum.zip(tl(line))
     |> Enum.map(fn {a, b} -> b - a end)
-  end
-
-  defp valid_changes?(changes) do
-    Enum.all?(changes, &(&1 in -3..3)) and
-      (Enum.all?(changes, &(&1 > 0)) or Enum.all?(changes, &(&1 < 0)))
   end
 
   def is_line_safe_with_removals([]), do: 0
 
+  # def is_line_safe_with_removals(line) do
+  #  if is_line_safe(line) == 1 or any_safe_removal?(line), do: 1, else: 0
+  # end
+
   def is_line_safe_with_removals(line) do
+    line
+    |> calculate_changes()
+    |> get_bad_pair_index()
+    |> any_safe_removal(line)
+  end
+
+  def any_safe_removal(nil, _), do: 1
+
+  def any_safe_removal(bad_pair_index, line) do
+    (bad_pair_index - 1)..(bad_pair_index + 1)
+    |> Enum.any?(fn i ->
+      line
+      |> List.delete_at(i)
+      |> is_line_safe() == 1
+    end)
+
     if is_line_safe(line) == 1 or any_safe_removal?(line), do: 1, else: 0
   end
+
+  def get_bad_pair_index(changes) do
+    slope =
+      changes
+      |> List.first()
+      |> get_slope()
+
+    changes
+    |> Enum.find_index(fn change ->
+      abs_value = abs(change)
+
+      abs_value < 1 or abs_value > 3 or get_slope(change) != slope
+    end)
+  end
+
+  defp get_slope(change) when change < 0, do: -1
+  defp get_slope(change) when change > 0, do: 1
+  defp get_slope(_), do: nil
 
   defp any_safe_removal?(line) do
     0..(length(line) - 1)
