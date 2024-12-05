@@ -21,6 +21,7 @@ defmodule Mix.Tasks.AdventBenchmark do
     one()
     two()
     three()
+    four()
   end
 
   defp run_task("one"), do: one()
@@ -29,10 +30,13 @@ defmodule Mix.Tasks.AdventBenchmark do
   defp run_task("2"), do: two()
   defp run_task("three"), do: three()
   defp run_task("3"), do: three()
+  defp run_task("four"), do: four()
+  defp run_task("4"), do: four()
 
   defp one(), do: run_task(AdventOfCode.One, "One")
   defp two(), do: run_task(AdventOfCode.Two, "Two")
   defp three(), do: run_task(AdventOfCode.Three, "Three")
+  defp four(), do: run_task(AdventOfCode.Four, "Four")
 
   defp run_task(module, day) do
     IO.puts("===== Day #{day} ============================================")
