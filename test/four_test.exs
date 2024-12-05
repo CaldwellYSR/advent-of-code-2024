@@ -10,9 +10,9 @@ defmodule AdventOfCode.FourTest do
     end
   end
 
-  # describe "star_two/1" do
-  #  test "given test data, return test output" do
-  #    assert Four.star_two("test/four-two.txt") == 48
-  #  end
-  # end
+  describe "star_two/1" do
+    test "given test data, return test output" do
+      assert Four.star_two("test/four.txt") == 9
+    end
+  end
 end

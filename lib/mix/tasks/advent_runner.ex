@@ -42,6 +42,6 @@ defmodule Mix.Tasks.AdventRunner do
   defp run_task(module, day) do
     IO.puts("===== Day #{day} ============================================")
     IO.inspect(module.star_one(), label: "Star One")
-    # IO.inspect(module.star_two(), label: "Star Two")
+    IO.inspect(module.star_two(), label: "Star Two")
   end
 end

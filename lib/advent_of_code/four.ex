@@ -1,6 +1,6 @@
 defmodule AdventOfCode.Four do
-  def star_one(filename \\ "four.txt"), do: process_data(filename, &star_one_parser/4)
-  def star_two(filename \\ "four.txt"), do: process_data(filename, &star_two_parser/2)
+  def star_one(filename \\ "four.txt"), do: process_data(filename, &star_one_parser/1)
+  def star_two(filename \\ "four.txt"), do: process_data(filename, &star_two_parser/1)
 
   def process_data(filename, parser) do
     grid =
@@ -8,16 +8,7 @@ defmodule AdventOfCode.Four do
       |> AdventOfCode.read_full_file()
       |> to_grid()
 
-    start_locations = Map.filter(grid, fn {_location, val} -> val == "X" end)
-
-    keys = Map.keys(grid)
-    {x_length, _} = Enum.max_by(keys, fn {x, _y} -> x end)
-    {_, y_length} = Enum.max_by(keys, fn {x, _y} -> x end)
-
-    apply(parser, [grid, start_locations, ["M", "A", "S"], {x_length, y_length}])
-  end
-
-  defp star_two_parser(line, grid) do
+    apply(parser, [grid])
   end
 
   defp to_grid(grid) do
@@ -28,7 +19,16 @@ defmodule AdventOfCode.Four do
     end
   end
 
-  defp star_one_parser(grid, start_locations, word = [next_char | rest_of_word], size) do
+  defp star_one_parser(grid) do
+    start_locations = Map.filter(grid, fn {_location, val} -> val == "X" end)
+
+    keys = Map.keys(grid)
+    {x_length, _} = Enum.max_by(keys, fn {x, _y} -> x end)
+    {_, y_length} = Enum.max_by(keys, fn {_x, y} -> y end)
+    size = {x_length, y_length}
+
+    word = [next_char | rest_of_word] = ["M", "A", "S"]
+
     start_locations
     |> Enum.map(fn {coord, _char} ->
       coord
@@ -52,6 +52,32 @@ defmodule AdventOfCode.Four do
     end)
     |> Enum.reject(&is_nil/1)
     |> Enum.count()
+  end
+
+  defp star_two_parser(grid) do
+    grid
+    |> Enum.filter(fn {_, val} -> val == "A" end)
+    |> Enum.count(fn {{x, y}, _} ->
+      check_cross(grid, x, y)
+    end)
+  end
+
+  defp check_cross(grid, x, y) do
+    pattern1 = match_pattern(grid, x, y, [{"M", -1, -1}, {"M", -1, 1}, {"S", 1, -1}, {"S", 1, 1}])
+    pattern2 = match_pattern(grid, x, y, [{"M", -1, -1}, {"S", -1, 1}, {"M", 1, -1}, {"S", 1, 1}])
+    pattern3 = match_pattern(grid, x, y, [{"S", -1, -1}, {"S", -1, 1}, {"M", 1, -1}, {"M", 1, 1}])
+    pattern4 = match_pattern(grid, x, y, [{"S", -1, -1}, {"M", -1, 1}, {"S", 1, -1}, {"M", 1, 1}])
+
+    pattern1 or pattern2 or pattern3 or pattern4
+  end
+
+  defp match_pattern(grid, x, y, offsets) do
+    Enum.all?(offsets, fn {expected_val, dx, dy} ->
+      case Map.fetch(grid, {x + dx, y + dy}) do
+        {:ok, ^expected_val} -> true
+        _ -> false
+      end
+    end)
   end
 
   defp find_next_letter(grid, start_location, direction, word = [next_char | rest_of_word])
