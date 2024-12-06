@@ -12,18 +12,9 @@ defmodule AdventOfCode.Day.Four do
   def process_file(filename, parser) do
     grid =
       filename
-      |> AdventOfCode.read_full_file()
-      |> to_grid()
+      |> AdventOfCode.read_file_to_grid()
 
     apply(parser, [grid])
-  end
-
-  defp to_grid(grid) do
-    for {row, i} <- grid |> String.split() |> Enum.with_index(),
-        {char, j} <- row |> String.graphemes() |> Enum.with_index(),
-        into: %{} do
-      {{j, i}, char}
-    end
   end
 
   defp star_one_parser(grid) do
