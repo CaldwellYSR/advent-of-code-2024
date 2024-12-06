@@ -27,15 +27,10 @@ defmodule Mix.Tasks.AdventRunner do
   end
 
   defp run_task("one"), do: one()
-  defp run_task("1"), do: one()
   defp run_task("two"), do: two()
-  defp run_task("2"), do: two()
   defp run_task("three"), do: three()
-  defp run_task("3"), do: three()
   defp run_task("four"), do: four()
-  defp run_task("4"), do: four()
   defp run_task("five"), do: five()
-  defp run_task("5"), do: five()
 
   defp one(), do: run_task(AdventOfCode.One, "One")
   defp two(), do: run_task(AdventOfCode.Two, "Two")
