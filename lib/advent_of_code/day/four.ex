@@ -20,7 +20,7 @@ defmodule AdventOfCode.Day.Four do
   defp star_one_parser(grid) do
     start_locations = Map.filter(grid, fn {_location, val} -> val == "X" end)
 
-    size = AdventOfCode.get_grid_size(grid)
+    size = AdventOfCode.Grid.get_size(grid)
 
     word = [next_char | rest_of_word] = ["M", "A", "S"]
 
@@ -77,7 +77,7 @@ defmodule AdventOfCode.Day.Four do
 
   defp find_next_letter(grid, start_location, direction, word = [next_char | rest_of_word])
        when length(word) > 0 do
-    neighbor = get_neighbor(start_location, direction)
+    neighbor = AdventOfCode.Grid.get_neighbor(start_location, direction)
 
     case Map.fetch(grid, neighbor) do
       {:ok, ^next_char} ->
@@ -125,9 +125,5 @@ defmodule AdventOfCode.Day.Four do
 
   defp direction({to_x, to_y}, {from_x, from_y}) do
     {to_x - from_x, to_y - from_y}
-  end
-
-  defp get_neighbor({coord_x, coord_y}, {dir_x, dir_y}) do
-    {coord_x + dir_x, coord_y + dir_y}
   end
 end

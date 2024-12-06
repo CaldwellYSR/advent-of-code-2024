@@ -51,7 +51,7 @@ defmodule AdventOfCode.Day.Six do
 
   defp check_neighbor(grid, start, direction) do
     obstacle = @obstacle
-    neighbor = AdventOfCode.get_grid_neighbor(start, direction)
+    neighbor = AdventOfCode.Grid.get_neighbor(start, direction)
 
     case Map.get_and_update(grid, neighbor, fn
            nil -> :pop
