@@ -1,8 +1,15 @@
-defmodule AdventOfCode.Two do
-  def star_one(filename \\ "two.txt"), do: process_data(filename, &is_line_safe/1)
-  def star_two(filename \\ "two.txt"), do: process_data(filename, &is_line_safe_with_removals/1)
+defmodule AdventOfCode.Day.Two do
+  alias AdventOfCode.Day
 
-  def process_data(filename, safety_check) do
+  @behaviour Day
+
+  @impl Day
+  def star_one(filename \\ "two.txt"), do: process_file(filename, &is_line_safe/1)
+  @impl Day
+  def star_two(filename \\ "two.txt"), do: process_file(filename, &is_line_safe_with_removals/1)
+
+  @impl Day
+  def process_file(filename, safety_check) do
     filename
     |> AdventOfCode.read_input()
     |> Stream.map(&parse_line/1)

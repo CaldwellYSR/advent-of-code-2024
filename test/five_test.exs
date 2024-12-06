@@ -2,7 +2,7 @@ defmodule AdventOfCode.FiveTest do
   use ExUnit.Case
   doctest AdventOfCode
 
-  alias AdventOfCode.Five
+  alias AdventOfCode.Day.Five
 
   describe "star_one/1" do
     test "given test data, return test output" do

@@ -1,10 +1,16 @@
-defmodule AdventOfCode.Five do
+defmodule AdventOfCode.Day.Five do
   alias AdventOfCode.Five.{RuleParser, UpdateProcessor}
+  alias AdventOfCode.Day
 
+  @behaviour Day
+
+  @impl Day
   def star_one(filename \\ "five.txt"), do: process_file(filename, &UpdateProcessor.star_one/2)
+  @impl Day
   def star_two(filename \\ "five.txt"), do: process_file(filename, &UpdateProcessor.star_two/2)
 
-  defp process_file(filename, reducer) do
+  @impl Day
+  def process_file(filename, reducer) do
     {rules, updates} =
       filename
       |> AdventOfCode.read_input()

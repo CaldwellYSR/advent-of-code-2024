@@ -2,7 +2,7 @@ defmodule AdventOfCode.ThreeTest do
   use ExUnit.Case
   doctest AdventOfCode
 
-  alias AdventOfCode.Three
+  alias AdventOfCode.Day.Three
 
   describe "star_one/1" do
     test "given test data, return test output" do

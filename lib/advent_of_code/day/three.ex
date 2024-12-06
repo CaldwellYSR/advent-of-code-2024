@@ -1,8 +1,15 @@
-defmodule AdventOfCode.Three do
-  def star_one(filename \\ "three.txt"), do: process_data(filename, &star_one_parser/1)
-  def star_two(filename \\ "three.txt"), do: process_data(filename, &star_two_parser/1)
+defmodule AdventOfCode.Day.Three do
+  alias AdventOfCode.Day
 
-  def process_data(filename, parser) do
+  @behaviour Day
+
+  @impl Day
+  def star_one(filename \\ "three.txt"), do: process_file(filename, &star_one_parser/1)
+  @impl Day
+  def star_two(filename \\ "three.txt"), do: process_file(filename, &star_two_parser/1)
+
+  @impl Day
+  def process_file(filename, parser) do
     filename
     |> AdventOfCode.read_input()
     |> Stream.flat_map(parser)

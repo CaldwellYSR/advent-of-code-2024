@@ -1,8 +1,15 @@
-defmodule AdventOfCode.Four do
-  def star_one(filename \\ "four.txt"), do: process_data(filename, &star_one_parser/1)
-  def star_two(filename \\ "four.txt"), do: process_data(filename, &star_two_parser/1)
+defmodule AdventOfCode.Day.Four do
+  alias AdventOfCode.Day
 
-  def process_data(filename, parser) do
+  @behaviour Day
+
+  @impl Day
+  def star_one(filename \\ "four.txt"), do: process_file(filename, &star_one_parser/1)
+  @impl Day
+  def star_two(filename \\ "four.txt"), do: process_file(filename, &star_two_parser/1)
+
+  @impl Day
+  def process_file(filename, parser) do
     grid =
       filename
       |> AdventOfCode.read_full_file()

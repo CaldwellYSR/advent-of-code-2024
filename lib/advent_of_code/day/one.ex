@@ -1,19 +1,28 @@
-defmodule AdventOfCode.One do
-  def star_one(), do: star_one("one.txt")
+defmodule AdventOfCode.Day.One do
+  alias AdventOfCode.Day
 
-  def star_one(filename) do
-    {list_a, list_b} = get_data(filename)
+  @behaviour Day
 
+  @impl Day
+  def star_one(filename \\ "one.txt"), do: process_file(filename, &star_one_parser/1)
+  @impl Day
+  def star_two(filename \\ "one.txt"), do: process_file(filename, &star_two_parser/1)
+
+  @impl Day
+  def process_file(filename, parser) do
+    data = get_data(filename)
+
+    apply(parser, [data])
+  end
+
+  def star_one_parser({list_a, list_b}) do
     Enum.zip(list_a, list_b)
     |> Enum.reduce(0, fn {a, b}, acc ->
       acc + abs(a - b)
     end)
   end
 
-  def star_two(), do: star_two("one.txt")
-
-  def star_two(filename) do
-    {list_a, list_b} = get_data(filename)
+  def star_two_parser({list_a, list_b}) do
     frequencies = Enum.frequencies(list_b)
 
     Enum.reduce(list_a, 0, fn value, acc ->
