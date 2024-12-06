@@ -6,7 +6,7 @@ defmodule AdventOfCode.SixTest do
 
   describe "star_one/1" do
     test "given test data, return test output" do
-      assert Six.star_one("test/six.txt") == :not_implemented
+      assert Six.star_one("test/six.txt") == 41
     end
   end
 
