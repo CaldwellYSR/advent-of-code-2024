@@ -20,10 +20,7 @@ defmodule AdventOfCode.Day.Four do
   defp star_one_parser(grid) do
     start_locations = Map.filter(grid, fn {_location, val} -> val == "X" end)
 
-    keys = Map.keys(grid)
-    {x_length, _} = Enum.max_by(keys, fn {x, _y} -> x end)
-    {_, y_length} = Enum.max_by(keys, fn {_x, y} -> y end)
-    size = {x_length, y_length}
+    size = AdventOfCode.get_grid_size(grid)
 
     word = [next_char | rest_of_word] = ["M", "A", "S"]
 
