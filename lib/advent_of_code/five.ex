@@ -1,108 +1,104 @@
 defmodule AdventOfCode.Five do
-  def star_one(filename \\ "five.txt"), do: process_file(filename, &star_one_reducer/2)
-  def star_two(filename \\ "five.txt"), do: process_file(filename, &star_two_reducer/2)
+  alias AdventOfCode.Five.{RuleParser, UpdateProcessor}
 
-  def process_file(filename, reducer) do
-    [{rules, updates}] =
+  def star_one(filename \\ "five.txt"), do: process_file(filename, &UpdateProcessor.star_one/2)
+  def star_two(filename \\ "five.txt"), do: process_file(filename, &UpdateProcessor.star_two/2)
+
+  defp process_file(filename, reducer) do
+    {rules, updates} =
       filename
       |> AdventOfCode.read_input()
-      |> Stream.scan({[], []}, &rules_parser/2)
-      |> Stream.take(-1)
-      |> Enum.to_list()
+      |> RuleParser.parse()
 
-    Enum.reduce(updates, 0, fn update, acc ->
-      acc + apply(reducer, [update, rules])
-    end)
+    Enum.reduce(updates, 0, &(reducer.(&1, rules) + &2))
+  end
+end
+
+defmodule AdventOfCode.Five.RuleParser do
+  def parse(input) do
+    Enum.reduce(input, {[], []}, &parse_line/2)
   end
 
-  def rules_parser(line, {rules, updates}) do
+  defp parse_line(line, {rules, updates}) do
     cond do
-      line =~ ~r/(\d+)\|(\d+)/ ->
-        {add_line_to_rules(line, rules), updates}
+      String.match?(line, ~r/(\d+)\|(\d+)/) ->
+        {[parse_rule(line) | rules], updates}
 
-      line =~ ~r/^$/ ->
-        # Empty string
+      line == "" ->
         {rules, updates}
 
       true ->
-        {rules, add_line_to_updates(line, updates)}
+        {rules, [parse_update(line) | updates]}
     end
   end
 
-  defp add_line_to_rules(line, rules) do
-    new_rule =
-      line
-      |> String.split("|", trim: true)
-      |> Enum.map(&String.to_integer/1)
-      |> List.to_tuple()
-
-    rules ++ [new_rule]
+  defp parse_rule(line) do
+    line
+    |> String.split("|", trim: true)
+    |> Enum.map(&String.to_integer/1)
+    |> List.to_tuple()
   end
 
-  defp add_line_to_updates(line, updates) do
-    new_update =
-      line
-      |> String.split(",", trim: true)
-      |> Enum.map(&String.to_integer/1)
-
-    updates ++ [new_update]
+  defp parse_update(line) do
+    line
+    |> String.split(",", trim: true)
+    |> Enum.map(&String.to_integer/1)
   end
+end
 
-  def star_one_reducer(update, rules) do
+defmodule AdventOfCode.Five.UpdateProcessor do
+  def star_one(update, rules) do
     if update_follows_rules?(update, rules) do
-      Enum.at(update, floor(length(update) / 2))
+      middle_value(update)
     else
       0
     end
   end
 
-  def star_two_reducer(update, rules) do
+  def star_two(update, rules) do
     if update_follows_rules?(update, rules) do
       0
     else
-      fixed_update = fix_update_by_rules(update, rules)
-      Enum.at(fixed_update, floor(length(fixed_update) / 2))
+      update
+      |> fix_update_by_rules(rules)
+      |> middle_value()
     end
   end
 
   defp update_follows_rules?(update, rules) do
     rules
     |> find_relevant_rules(update)
-    |> Enum.map(fn {left, right} ->
-      left_index = Enum.find_index(update, fn u -> u == left end)
-      right_index = Enum.find_index(update, fn u -> u == right end)
-
+    |> Enum.all?(fn {left, right} ->
+      left_index = Enum.find_index(update, &(&1 == left))
+      right_index = Enum.find_index(update, &(&1 == right))
       left_index < right_index
     end)
-    |> Enum.reject(&is_nil/1)
-    |> Enum.all?()
   end
 
   defp find_relevant_rules(rules, update) do
-    rules
-    |> Enum.filter(fn {left, right} ->
+    Enum.filter(rules, fn {left, right} ->
       left in update and right in update
     end)
   end
 
   defp fix_update_by_rules(update, rules) do
     relevant_rules = find_relevant_rules(rules, update)
-
-    Enum.sort(update, fn a, b ->
-      case {find_rule_position(a, b, relevant_rules), find_rule_position(b, a, relevant_rules)} do
-        {:left, _} ->
-          true
-
-        {_, :left} ->
-          false
-
-        _ ->
-          a < b
-      end
-    end)
+    Enum.sort(update, &compare_by_rules(&1, &2, relevant_rules))
   end
 
-  def find_rule_position(a, b, rules) do
-    if Enum.any?(rules, fn {left, right} -> left == a and right == b end), do: :left, else: :none
+  defp compare_by_rules(a, b, rules) do
+    cond do
+      rule_exists?(a, b, rules) -> true
+      rule_exists?(b, a, rules) -> false
+      true -> a < b
+    end
+  end
+
+  defp rule_exists?(a, b, rules) do
+    Enum.any?(rules, fn {left, right} -> left == a and right == b end)
+  end
+
+  defp middle_value(list) do
+    Enum.at(list, div(length(list), 2))
   end
 end
