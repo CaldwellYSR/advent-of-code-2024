@@ -7,12 +7,19 @@ defmodule Mix.Tasks.Advent.Gen.Day do
     name = String.capitalize(filename)
 
     module_content = """
-    defmodule AdventOfCode.#{name} do
-      def star_one(filename \\\\ "#{filename}.txt"), do: process_file(filename)
+    defmodule AdventOfCode.Day.#{name} do
+      alias AdventOfCode.Day
 
-      def star_two(filename \\\\ "#{filename}.txt"), do: process_file(filename)
+      @behaviour Day
 
-      defp process_file(filename) do
+      @impl Day
+      def star_one(filename \\\\ "#{filename}.txt"), do: process_file(filename, &star_one_parser/1)
+
+      @impl Day
+      def star_two(filename \\\\ "#{filename}.txt"), do: process_file(filename, &star_two_parser/1)
+
+      @impl Day
+      defp process_file(filename, _parser) do
         AdventOfCode.read_input(filename)
       end
     end
@@ -23,7 +30,7 @@ defmodule Mix.Tasks.Advent.Gen.Day do
       use ExUnit.Case
       doctest AdventOfCode
 
-      alias AdventOfCode.#{name}
+      alias AdventOfCode.Day.#{name}
 
       describe "star_one/1" do
         test "given test data, return test output" do
@@ -39,11 +46,11 @@ defmodule Mix.Tasks.Advent.Gen.Day do
     end
     """
 
-    File.write!("lib/#{filename}.ex", module_content)
+    File.write!("lib/advent_of_code/day/#{filename}.ex", module_content)
     File.write!("test/#{filename}_test.exs", test_content)
     File.write!("priv/input/#{filename}.txt", "")
     File.write!("priv/input/test/#{filename}.txt", "")
-    IO.puts("Generated lib/#{filename}.ex module")
+    IO.puts("Generated lib/advent_of_code/day/#{filename}.ex module")
     IO.puts("Generated test/#{filename}_test.exs module")
     IO.puts("Generated priv/input/test/#{filename}.txt for test data")
     IO.puts("Generated priv/input/#{filename}.txt for puzzle data")
