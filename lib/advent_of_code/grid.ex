@@ -16,4 +16,19 @@ defmodule AdventOfCode.Grid do
       {{x, y}, char}
     end
   end
+
+  def visualize(grid) do
+    {width, height} = get_size(grid)
+
+    IO.puts("\n")
+
+    Enum.each(0..width, fn y ->
+      Enum.reduce(0..height, "", fn x, acc ->
+        acc <> Map.fetch!(grid, {x, y})
+      end)
+      |> IO.inspect()
+    end)
+
+    grid
+  end
 end
