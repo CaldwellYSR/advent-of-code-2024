@@ -6,6 +6,9 @@ defmodule AdventOfCode.Grid do
     {x_length, y_length}
   end
 
+  def get_slope({from_x, from_y}, {to_x, to_y}),
+    do: {to_x - from_x, to_y - from_y}
+
   def get_neighbor({coord_x, coord_y}, {dir_x, dir_y}),
     do: {coord_x + dir_x, coord_y + dir_y}
 
