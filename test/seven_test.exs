@@ -6,13 +6,13 @@ defmodule AdventOfCode.SevenTest do
 
   describe "star_one/1" do
     test "given test data, return test output" do
-      assert Seven.star_one("test/seven.txt") == :not_implemented
+      assert Seven.star_one("test/seven.txt") == 3749
     end
   end
 
   describe "star_two/1" do
     test "given test data, return test output" do
-      assert Seven.star_two("test/seven.txt") == :not_implemented
+      assert Seven.star_two("test/seven.txt") == 11387
     end
   end
 end
