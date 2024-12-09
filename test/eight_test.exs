@@ -12,7 +12,7 @@ defmodule AdventOfCode.EightTest do
 
   describe "star_two/1" do
     test "given test data, return test output" do
-      assert Eight.star_two("test/eight.txt") == :not_implemented
+      assert Eight.star_two("test/eight.txt") == 34
     end
   end
 end
