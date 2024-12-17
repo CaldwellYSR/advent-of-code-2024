@@ -6,7 +6,7 @@ defmodule AdventOfCode.ElevenTest do
 
   describe "star_one/1" do
     test "given test data, return test output" do
-      assert Eleven.star_one("test/eleven.txt") == :not_implemented
+      assert Eleven.star_one("test/eleven.txt") == 55312
     end
   end
 
