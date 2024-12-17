@@ -20,6 +20,23 @@ defmodule AdventOfCode.Grid do
     end
   end
 
+  def to_integer_grid!(file) do
+    for {row, y} <- file |> String.split() |> Enum.with_index(),
+        {char, x} <- row |> String.graphemes() |> Enum.with_index(),
+        into: %{} do
+      {{x, y}, String.to_integer(char)}
+    end
+  end
+
+  def cardinal_directions() do
+    [
+      {1, 0},
+      {0, 1},
+      {-1, 0},
+      {0, -1}
+    ]
+  end
+
   def visualize(grid) do
     {width, height} = get_size(grid)
 
@@ -27,7 +44,7 @@ defmodule AdventOfCode.Grid do
 
     Enum.each(0..width, fn y ->
       Enum.reduce(0..height, "", fn x, acc ->
-        acc <> Map.fetch!(grid, {x, y})
+        acc <> "#{Map.fetch!(grid, {x, y})}"
       end)
       |> IO.inspect()
     end)

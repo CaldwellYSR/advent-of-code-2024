@@ -15,4 +15,10 @@ defmodule AdventOfCode do
     |> File.read!()
     |> AdventOfCode.Grid.to_grid()
   end
+
+  def read_file_to_integer_grid(filename) do
+    "#{Application.app_dir(:aoc_2024, "/priv/input/#{filename}")}"
+    |> File.read!()
+    |> AdventOfCode.Grid.to_integer_grid!()
+  end
 end
