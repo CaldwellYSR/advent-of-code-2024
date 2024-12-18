@@ -1,51 +1,44 @@
 defmodule AdventOfCode.Day.Eleven do
-  alias AdventOfCode.Day
+  def star_one(filename \\ "eleven.txt"), do: process_file(filename, 25)
+  def star_two(filename \\ "eleven.txt"), do: process_file(filename, 75)
 
-  @behaviour Day
-
-  @impl Day
-  def star_one(filename \\ "eleven.txt"), do: process_file(filename, &star_one_parser/1)
-
-  @impl Day
-  def star_two(filename \\ "eleven.txt"), do: process_file(filename, &star_two_parser/1)
-
-  @impl Day
-  def process_file(filename, parser) do
-    line =
+  def process_file(filename, times) do
+    initial_map =
       filename
       |> AdventOfCode.read_full_file()
       |> String.replace("\n", "")
       |> String.split(" ", trim: true)
+      |> Enum.reduce(%{}, fn num, acc -> Map.put(acc, num, 1) end)
 
-    Enum.scan(0..24, line, fn _, last_line ->
-      Enum.flat_map(last_line, parser)
+    Enum.reduce(1..times, initial_map, fn _, acc ->
+      Enum.reduce(acc, %{}, fn {number, count}, new_acc ->
+        process_number(number, count, new_acc)
+      end)
     end)
-    |> List.last()
-    |> Enum.count()
+    |> Map.values()
+    |> Enum.sum()
   end
 
-  def star_one_parser("0"), do: ["1"]
-  def star_one_parser("1"), do: ["2024"]
+  defp process_number("0", count, acc), do: Map.update(acc, "1", count, &(&1 + count))
 
-  def star_one_parser(val) do
-    str_len = String.length(val)
+  defp process_number(number, count, acc) do
+    case String.length(number) do
+      len when rem(len, 2) == 0 ->
+        {left, right} = String.split_at(number, div(len, 2))
 
-    if rem(str_len, 2) == 0 do
-      {left, right} = String.split_at(val, floor(str_len / 2))
+        right =
+          case String.trim_leading(right, "0") do
+            "" -> "0"
+            s -> s
+          end
 
-      right =
-        case String.trim_leading(right, "0") do
-          "" -> "0"
-          s -> s
-        end
+        acc
+        |> Map.update(left, count, &(&1 + count))
+        |> Map.update(right, count, &(&1 + count))
 
-      [left, right]
-    else
-      ["#{String.to_integer(val) * 2024}"]
+      _ ->
+        new_val = Integer.to_string(String.to_integer(number) * 2024)
+        Map.update(acc, new_val, count, &(&1 + count))
     end
-  end
-
-  def star_two_parser(_line) do
-    :not_implemented
   end
 end
