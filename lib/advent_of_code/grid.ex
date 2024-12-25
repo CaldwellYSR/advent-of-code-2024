@@ -6,6 +6,10 @@ defmodule AdventOfCode.Grid do
     {x_length, y_length}
   end
 
+  def fetch(grid, coord) do
+    Map.fetch(grid, coord)
+  end
+
   def get_slope({from_x, from_y}, {to_x, to_y}),
     do: {to_x - from_x, to_y - from_y}
 
